@@ -57,9 +57,10 @@ void krs_list_menu_add_item(krs_list_menu_t *menu, krs_list_item_t *item)
         menu->first_item->next_item = NULL;
         menu->first_item->prev_item = NULL;
 
-        menu->first_item        = item;
-        menu->start_screen_item = item;
-        menu->current_item      = item;
+        menu->first_item                   = item;
+        menu->start_screen_item            = item;
+        menu->current_item                 = item;
+        menu->current_item->is_highlighted = true;
     } else {
         krs_list_item_t *last_item = menu->first_item;
 
@@ -72,8 +73,16 @@ void krs_list_menu_add_item(krs_list_menu_t *menu, krs_list_item_t *item)
         item->next_item      = NULL;
     }
 
+    item->index = menu->total_items;
     menu->total_items++;
-    menu->first_item->index = menu->total_items - 1;
+}
+
+void krs_list_menu_add_many_itens(krs_list_menu_t *menu, krs_list_item_t *itens,
+                                  size_t size)
+{
+    for (int i = 0; i < size; ++i) {
+        krs_list_menu_add_item(menu, &itens[i]);
+    }
 }
 
 void krs_list_menu_next_item(krs_list_menu_t *menu)
@@ -116,10 +125,6 @@ void krs_list_menu_sel_item(krs_list_menu_t *menu)
 void krs_draw_list_menu(krs_list_menu_t *menu)
 {
     krs_list_item_t *item = menu->start_screen_item;
-
-    krs_draw_rect_empty(
-        menu->vram, KRS_POINT(START_X, START_Y),
-        KRS_POINT(XSIZE, 6 * (BOX_HEIGHT + 1 + LINE_OFFSET) + LINE_OFFSET), TEXT_COLOR);
 
     for (int i = 0; i < 6 && item != NULL; ++i, item = item->next_item) {
         draw_list_item(menu->vram, item, i);

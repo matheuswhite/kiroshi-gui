@@ -17,35 +17,35 @@
 #define ABS(a) (((a) < 0) ? -(a) : (a))
 #endif
 
-static void draw_line_inner(uint16_t vram[][SCREEN_WIDTH], int x1, int y1, int x2, int y2,
-                            int dx, int dy, int decide, krs_color_t color);
+static void draw_line_inner(uint16_t *vram, int x1, int y1, int x2, int y2, int dx,
+                            int dy, int decide, krs_color_t color);
 
-void krs_clear_all(uint16_t vram[][SCREEN_WIDTH], krs_color_t color)
+void krs_clear_all(uint16_t *vram, krs_color_t color)
 {
     for (int i = 0; i < SCREEN_HEIGHT; ++i) {
         for (int j = 0; j < SCREEN_WIDTH; ++j) {
-            vram[i][j] = COLOR2U16(color);
+            vram[i * SCREEN_WIDTH + j] = COLOR2U16(color);
         }
     }
 }
 
-void krs_set_pixel(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, krs_color_t color)
+void krs_set_pixel(uint16_t *vram, krs_point_t position, krs_color_t color)
 {
-    vram[position.y][position.x] = COLOR2U16(color);
+    vram[position.y * SCREEN_WIDTH + position.x] = COLOR2U16(color);
 }
 
-void krs_draw_rect(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, krs_point_t size,
+void krs_draw_rect(uint16_t *vram, krs_point_t position, krs_point_t size,
                    krs_color_t color)
 {
     for (int i = position.x; i < position.x + size.x; ++i) {
         for (int j = position.y; j < position.y + size.y; ++j) {
-            vram[j][i] = COLOR2U16(color);
+            vram[j * SCREEN_WIDTH + i] = COLOR2U16(color);
         }
     }
 }
 
-void krs_draw_rect_empty(uint16_t vram[][SCREEN_WIDTH], krs_point_t position,
-                         krs_point_t size, krs_color_t color)
+void krs_draw_rect_empty(uint16_t *vram, krs_point_t position, krs_point_t size,
+                         krs_color_t color)
 {
     krs_draw_h_line(vram, position, size.x, color);
     krs_draw_h_line(vram, KRS_POINT(position.x, position.y + size.y), size.x, color);
@@ -53,24 +53,23 @@ void krs_draw_rect_empty(uint16_t vram[][SCREEN_WIDTH], krs_point_t position,
     krs_draw_v_line(vram, KRS_POINT(position.x + size.x, position.y), size.y + 1, color);
 }
 
-void krs_draw_h_line(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, uint16_t length,
-                     krs_color_t color)
-{
-    for (int i = position.y; i < position.y + length; ++i) {
-        vram[i][position.x] = COLOR2U16(color);
-    }
-}
-
-void krs_draw_v_line(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, uint16_t length,
+void krs_draw_h_line(uint16_t *vram, krs_point_t position, uint16_t length,
                      krs_color_t color)
 {
     for (int i = position.x; i < position.x + length; ++i) {
-        vram[position.y][i] = COLOR2U16(color);
+        vram[position.y * SCREEN_WIDTH + i] = COLOR2U16(color);
     }
 }
 
-uint16_t krs_draw_char(uint16_t vram[][SCREEN_WIDTH], krs_point_t pos,
-                       char letter, krs_color_t color)
+void krs_draw_v_line(uint16_t *vram, krs_point_t position, uint16_t length,
+                     krs_color_t color)
+{
+    for (int i = position.y; i < position.y + length; ++i) {
+        vram[i * SCREEN_WIDTH + position.x] = COLOR2U16(color);
+    }
+}
+
+uint16_t krs_draw_char(uint16_t *vram, krs_point_t pos, char letter, krs_color_t color)
 {
     int idx = get_index(letter);
     if (idx == -22) {
@@ -81,15 +80,18 @@ uint16_t krs_draw_char(uint16_t vram[][SCREEN_WIDTH], krs_point_t pos,
         uint16_t mask = 0x8000;
         for (int j = 0; j < chicago_font[idx].width; ++j) {
             if (chicago_font[idx].img[i] & mask) {
-                vram[pos.y + i + chicago_font[idx].offsety][pos.x + j] = COLOR2U16(color);
+                vram[(pos.y + i + chicago_font[idx].offsety) * SCREEN_WIDTH + pos.x + j] =
+                    COLOR2U16(color);
             }
+
+            mask = mask >> 1;
         }
     }
 
     return chicago_font[idx].width;
 }
 
-uint16_t krs_draw_string(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, char *str,
+uint16_t krs_draw_string(uint16_t *vram, krs_point_t position, char *str,
                          krs_color_t color)
 {
     const size_t str_len = strlen(str);
@@ -112,14 +114,14 @@ uint16_t krs_draw_string(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, ch
     return offset_x;
 }
 
-void krs_draw_bitmap(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, uint32_t *img,
+void krs_draw_bitmap(uint16_t *vram, krs_point_t position, uint32_t *img,
                      krs_point_t size, krs_color_t color)
 {
     for (int i = 0; i < size.y; ++i) {
         uint32_t mask = 0x80000000;
         for (int j = 0; j < size.x; ++j) {
             if (img[i] & mask) {
-                vram[position.y + i][position.x + j] = COLOR2U16(color);
+                vram[(position.y + i) * SCREEN_WIDTH + position.x + j] = COLOR2U16(color);
             }
 
             mask = mask >> 1;
@@ -127,7 +129,7 @@ void krs_draw_bitmap(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, uint32
     }
 }
 
-void krs_draw_circle(uint16_t vram[][SCREEN_WIDTH], krs_point_t center, uint16_t radius,
+void krs_draw_circle(uint16_t *vram, krs_point_t center, uint16_t radius,
                      krs_color_t color)
 {
     int x = 0;
@@ -150,22 +152,22 @@ void krs_draw_circle(uint16_t vram[][SCREEN_WIDTH], krs_point_t center, uint16_t
     }
 }
 
-void krs_draw_circle_empty(uint16_t vram[][SCREEN_WIDTH], krs_point_t center,
-                           uint16_t radius, krs_color_t color)
+void krs_draw_circle_empty(uint16_t *vram, krs_point_t center, uint16_t radius,
+                           krs_color_t color)
 {
     int x = 0;
     int y = radius;
     int m = 5 - 4 * radius;
 
     while (x <= y) {
-        vram[center.y - y][center.x - x] = COLOR2U16(color);
-        vram[center.y - y][center.x + x] = COLOR2U16(color);
-        vram[center.y - x][center.x - y] = COLOR2U16(color);
-        vram[center.y - x][center.x + y] = COLOR2U16(color);
-        vram[center.y + x][center.x - y] = COLOR2U16(color);
-        vram[center.y + x][center.x + y] = COLOR2U16(color);
-        vram[center.y + y][center.x - x] = COLOR2U16(color);
-        vram[center.y + y][center.x + x] = COLOR2U16(color);
+        vram[(center.y - y) * SCREEN_WIDTH + center.x - x] = COLOR2U16(color);
+        vram[(center.y - y) * SCREEN_WIDTH + center.x + x] = COLOR2U16(color);
+        vram[(center.y - x) * SCREEN_WIDTH + center.x - y] = COLOR2U16(color);
+        vram[(center.y - x) * SCREEN_WIDTH + center.x + y] = COLOR2U16(color);
+        vram[(center.y + x) * SCREEN_WIDTH + center.x - y] = COLOR2U16(color);
+        vram[(center.y + x) * SCREEN_WIDTH + center.x + y] = COLOR2U16(color);
+        vram[(center.y + y) * SCREEN_WIDTH + center.x - x] = COLOR2U16(color);
+        vram[(center.y + y) * SCREEN_WIDTH + center.x + x] = COLOR2U16(color);
 
         if (m > 0) {
             y--;
@@ -177,16 +179,15 @@ void krs_draw_circle_empty(uint16_t vram[][SCREEN_WIDTH], krs_point_t center,
     }
 }
 
-void krs_draw_line(uint16_t vram[][SCREEN_WIDTH], krs_point_t p1, krs_point_t p2,
-                   krs_color_t color)
+void krs_draw_line(uint16_t *vram, krs_point_t p1, krs_point_t p2, krs_color_t color)
 {
     int dx = ABS(p2.x - p1.x);
     int dy = ABS(p2.y - p1.y);
     draw_line_inner(vram, p1.x, p1.y, p2.x, p2.y, dx, dy, (dx > dy) ? 0 : 1, color);
 }
 
-static void draw_line_inner(uint16_t vram[][SCREEN_WIDTH], int x1, int y1, int x2, int y2,
-                            int dx, int dy, int decide, krs_color_t color)
+static void draw_line_inner(uint16_t *vram, int x1, int y1, int x2, int y2, int dx,
+                            int dy, int decide, krs_color_t color)
 {
     // pk is initial decision making parameter
     // Note:x1&y1,x2&y2, dx&dy values are interchanged
@@ -194,7 +195,7 @@ static void draw_line_inner(uint16_t vram[][SCREEN_WIDTH], int x1, int y1, int x
     // it can handle both cases when m>1 & m<1
     int pk = 2 * dy - dx;
     for (int i = 0; i <= dx; i++) {
-        vram[y1][x1] = COLOR2U16(color);
+        vram[y1 * SCREEN_WIDTH + x1] = COLOR2U16(color);
         // checking either to decrement or increment the value
         // if we have to plot from (0,100) to (100,0)
         x1 < x2 ? x1++ : x1--;

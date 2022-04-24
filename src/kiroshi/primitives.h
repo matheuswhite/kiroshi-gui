@@ -36,39 +36,36 @@ typedef struct {
     int8_t b;
 } krs_color_t;
 
-void krs_clear_all(uint16_t vram[][SCREEN_WIDTH], krs_color_t color);
+void krs_clear_all(uint16_t *vram, krs_color_t color);
 
-void krs_set_pixel(uint16_t vram[][SCREEN_WIDTH], krs_point_t position,
+void krs_set_pixel(uint16_t *vram, krs_point_t position, krs_color_t color);
+
+void krs_draw_rect(uint16_t *vram, krs_point_t position, krs_point_t size,
                    krs_color_t color);
 
-void krs_draw_rect(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, krs_point_t size,
-                   krs_color_t color);
-
-void krs_draw_rect_empty(uint16_t vram[][SCREEN_WIDTH], krs_point_t position,
-                         krs_point_t size, krs_color_t color);
-
-void krs_draw_h_line(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, uint16_t length,
-                     krs_color_t color);
-
-void krs_draw_v_line(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, uint16_t length,
-                     krs_color_t color);
-
-uint16_t krs_draw_char(uint16_t vram[][SCREEN_WIDTH], krs_point_t pos,
-                       char letter, krs_color_t color);
-
-uint16_t krs_draw_string(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, char *str,
+void krs_draw_rect_empty(uint16_t *vram, krs_point_t position, krs_point_t size,
                          krs_color_t color);
 
-void krs_draw_bitmap(uint16_t vram[][SCREEN_WIDTH], krs_point_t position, uint32_t *img,
-                     krs_point_t size, krs_color_t color);
-
-void krs_draw_circle(uint16_t vram[][SCREEN_WIDTH], krs_point_t center, uint16_t radius,
+void krs_draw_h_line(uint16_t *vram, krs_point_t position, uint16_t length,
                      krs_color_t color);
 
-void krs_draw_circle_empty(uint16_t vram[][SCREEN_WIDTH], krs_point_t center,
-                           uint16_t radius, krs_color_t color);
+void krs_draw_v_line(uint16_t *vram, krs_point_t position, uint16_t length,
+                     krs_color_t color);
 
-void krs_draw_line(uint16_t vram[][SCREEN_WIDTH], krs_point_t p1, krs_point_t p2,
-                   krs_color_t color);
+uint16_t krs_draw_char(uint16_t *vram, krs_point_t pos, char letter, krs_color_t color);
+
+uint16_t krs_draw_string(uint16_t *vram, krs_point_t position, char *str,
+                         krs_color_t color);
+
+void krs_draw_bitmap(uint16_t *vram, krs_point_t position, uint32_t *img,
+                     krs_point_t size, krs_color_t color);
+
+void krs_draw_circle(uint16_t *vram, krs_point_t center, uint16_t radius,
+                     krs_color_t color);
+
+void krs_draw_circle_empty(uint16_t *vram, krs_point_t center, uint16_t radius,
+                           krs_color_t color);
+
+void krs_draw_line(uint16_t *vram, krs_point_t p1, krs_point_t p2, krs_color_t color);
 
 #endif  // PRIMITIVES_H

@@ -32,8 +32,8 @@ int lcd_init();
 
 void lcd_reset();
 
-void lcd_refresh(uint16_t vram[][SCREEN_WIDTH], uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+void lcd_refresh(uint16_t *vram, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
-void lcd_refresh_all(uint16_t vram[][SCREEN_WIDTH]);
+void lcd_refresh_all(uint16_t *vram);
 
 #endif  // LCD_DRIVER_H

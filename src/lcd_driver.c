@@ -100,26 +100,26 @@ static void send_cmd(uint8_t cmd, uint8_t *data, size_t len)
     }
 }
 
-void lcd_refresh(uint16_t vram[][SCREEN_WIDTH], uint16_t x, uint16_t y, uint16_t w, uint16_t h)
+void lcd_refresh(uint16_t *vram, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
     lcd_refresh_all(vram);
 }
 
-void lcd_refresh_all(uint16_t vram[][SCREEN_WIDTH])
+void lcd_refresh_all(uint16_t *vram)
 {
-    uint8_t buffer[4] = {0};
+    uint8_t buffer_msg[4] = {0};
 
-    buffer[0] = 0;
-    buffer[1] = 0;
-    buffer[2] = 0;
-    buffer[3] = SCREEN_WIDTH;
-    send_cmd(0x2A, buffer, 4);
+    buffer_msg[0] = 0;
+    buffer_msg[1] = 0;
+    buffer_msg[2] = 0;
+    buffer_msg[3] = SCREEN_WIDTH;
+    send_cmd(0x2A, buffer_msg, 4);
 
-    buffer[0] = 0;
-    buffer[1] = 0;
-    buffer[2] = 0;
-    buffer[3] = SCREEN_HEIGHT;
-    send_cmd(0x2B, buffer, 4);
+    buffer_msg[0] = 0;
+    buffer_msg[1] = 0;
+    buffer_msg[2] = 0;
+    buffer_msg[3] = SCREEN_HEIGHT;
+    send_cmd(0x2B, buffer_msg, 4);
 
     send_cmd(0x2C, (uint8_t *) vram, SCREEN_WIDTH*SCREEN_HEIGHT*2);
 
