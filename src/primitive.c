@@ -1,6 +1,6 @@
 /**
  * @file primitive.c
- * @author Matheus T. dos Santos (matheus.santos@edge.ufal.br)
+ * @author Matheus T. dos Santos (tenoriomatheus0@gmail.com)
  * @brief
  * @version 0.1
  * @date 22/04/2022

@@ -1,6 +1,6 @@
 /**
  * @file lcd_driver.h
- * @author Matheus T. dos Santos (matheus.santos@edge.ufal.br)
+ * @author Matheus T. dos Santos (tenoriomatheus0@gmail.com)
  * @brief
  * @version 0.1
  * @date 14/04/2022
