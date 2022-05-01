@@ -23,6 +23,8 @@ static int get_index(char sign)
         idx = sign - 'a' + 1 + 10 + 26;
     } else if (sign == '%') {
         idx = 63;
+    } else if (sign == ':') {
+        idx = 64;
     } else {
         idx = -22;
     }
@@ -560,6 +562,32 @@ static const struct chicago_font_t chicago_font[] = {
             0xc600,
         },
         .width  = 7,
+        .height = 9,
+        .offsety = 0,
+    },
+    {
+        // :
+        // oooo
+        // oooo
+        // oxxo
+        // oxxo
+        // oooo
+        // oooo
+        // oooo
+        // oxxo
+        // oxxo
+        .img    = {
+            0x0000,
+            0x0000,
+            0x6000,
+            0x6000,
+            0x0000,
+            0x0000,
+            0x0000,
+            0x6000,
+            0x6000,
+        },
+        .width  = 4,
         .height = 9,
         .offsety = 0,
     },

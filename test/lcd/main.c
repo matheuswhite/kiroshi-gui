@@ -1,8 +1,7 @@
-#include <pico/stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "kiroshi/lcd_driver.h"
+#include "lcd_driver.h"
 #include "kiroshi/list_menu.h"
 #include "kiroshi/primitives.h"
 
@@ -280,7 +279,7 @@ _Noreturn void new_menu_page(void)
     }
 }
 
-_Noreturn void color_test(void)
+[[noreturn]] _Noreturn void color_test(void)
 {
     uint8_t i = 0;
 

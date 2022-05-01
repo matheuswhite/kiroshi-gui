@@ -186,6 +186,17 @@ void krs_draw_line(uint16_t *vram, krs_point_t p1, krs_point_t p2, krs_color_t c
     draw_line_inner(vram, p1.x, p1.y, p2.x, p2.y, dx, dy, (dx > dy) ? 0 : 1, color);
 }
 
+void krs_invert(uint16_t *vram, krs_point_t position, krs_point_t size, krs_color_t color)
+{
+    uint16_t arg_color = COLOR2U16(color);
+
+    for (int i = position.y; i < position.y + size.y; ++i) {
+        for (int j = position.x; j < position.x + size.x; ++j) {
+            vram[i * SCREEN_WIDTH + j] = (vram[i * SCREEN_WIDTH + j] == 0) ? arg_color : 0;
+        }
+    }
+}
+
 static void draw_line_inner(uint16_t *vram, int x1, int y1, int x2, int y2, int dx,
                             int dy, int decide, krs_color_t color)
 {

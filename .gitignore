@@ -1,4 +1,5 @@
 build
+build_sdl2
 .idea/
 *.SVDat
 

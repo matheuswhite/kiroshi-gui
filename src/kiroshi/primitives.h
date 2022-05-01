@@ -17,7 +17,7 @@
 #include <string.h>
 
 #include "kiroshi/chicago_font.h"
-#include "kiroshi/lcd_driver.h"
+//#include "kiroshi/lcd_driver.h"
 
 #define SCREEN_WIDTH 160
 #define SCREEN_HEIGHT 128
@@ -67,5 +67,7 @@ void krs_draw_circle_empty(uint16_t *vram, krs_point_t center, uint16_t radius,
                            krs_color_t color);
 
 void krs_draw_line(uint16_t *vram, krs_point_t p1, krs_point_t p2, krs_color_t color);
+
+void krs_invert(uint16_t *vram, krs_point_t position, krs_point_t size, krs_color_t color);
 
 #endif  // PRIMITIVES_H

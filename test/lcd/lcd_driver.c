@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2022
  *
  */
-#include "kiroshi/lcd_driver.h"
+#include "lcd_driver.h"
 
 static void send_cmd(uint8_t cmd, uint8_t *data, size_t len);
 
